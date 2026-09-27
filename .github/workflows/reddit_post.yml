@@ -1,0 +1,52 @@
+# .github/workflows/reddit_post.yml
+#
+# Automatically posts a rotating MPT Country Roads Marketplace promo to Reddit.
+# Schedule: Monday, Wednesday, Friday at 10:00 AM Mountain Time (UTC-6 standard / UTC-7 daylight).
+#
+# Alberta observes MDT (UTC-6) in summer and MST (UTC-7) in winter.
+# 10am MDT = 16:00 UTC  |  10am MST = 17:00 UTC
+# The cron below uses 16:00 UTC — adjust to 17:00 in winter if needed,
+# or add a second cron entry to cover both offsets automatically.
+#
+# Required GitHub Secrets (Settings → Secrets and variables → Actions → New repository secret):
+#   REDDIT_CLIENT_ID
+#   REDDIT_CLIENT_SECRET
+#   REDDIT_USERNAME
+#   REDDIT_PASSWORD
+#   REDDIT_USER_AGENT
+
+name: Post to Reddit
+
+on:
+  schedule:
+    # 10am MDT (UTC-6) = 16:00 UTC — Mon, Wed, Fri
+    - cron: '0 16 * * 1,3,5'
+    # 10am MST (UTC-7) = 17:00 UTC — uncomment for winter months
+    # - cron: '0 17 * * 1,3,5'
+  workflow_dispatch:  # allows manual trigger from the Actions tab for testing
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install praw
+
+      - name: Post to Reddit
+        env:
+          REDDIT_CLIENT_ID:     ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USERNAME:      ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD:      ${{ secrets.REDDIT_PASSWORD }}
+          REDDIT_USER_AGENT:    ${{ secrets.REDDIT_USER_AGENT }}
+        run: python post_to_reddit.py
