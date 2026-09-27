@@ -2,6 +2,7 @@
 
 Compiled by Ranger, September 2026.
 App URL: https://albertacountryroadsmrkt.whacka.app
+IMPORTANT: Rate limit ~1 post per 9 minutes. Space posts out; each retry resets the clock.
 
 ---
 
@@ -14,18 +15,25 @@ App URL: https://albertacountryroadsmrkt.whacka.app
 - r/Airdrie — bans buy/sell ads
 - r/FortMcMurray — no job ads or spam
 - r/MedicineHat — no business advertising
+- r/Banff — explicit "No buy and sell" rule
+- r/Chestermere — private subreddit
 
-### ATTEMPT — Permissive or no explicit ban
-- r/GrandePrairie — no rules returned (attempt)
-- r/RedDeer — "tasteful promotional posts from local businesses permitted" (needs flair: Local Business)
+### POSTED ✅
+- r/lloydminster — https://www.reddit.com/r/lloydminster/comments/1wrowoq/alberta_buysell_marketplace_app_free_to_join_99/
+- r/GrandePrairie — https://www.reddit.com/r/GrandePrairie/comments/1wrp64z/free_local_alberta_buysell_marketplace_app_99/
+
+### QUEUE FOR AUTOMATION — Permissive or no explicit ban
+- r/RedDeer — "tasteful promotional posts from local businesses permitted" (USE LOCAL BUSINESS FLAIR: 2f3d5ad8-01d1-11eb-a373-0ec34596dbc5)
 - r/lethbridge — "self-promotion allowed for contributing members"
-- r/Lloydminster — no explicit ad ban, quality standards required ✅ POSTED
-- r/Canmore — no rules returned (attempt)
-- r/FortSaskatchewan — no explicit ad ban (attempt)
-- r/SherwoodPark — "no spam and no excessive self-promotion" (borderline, attempt)
-
-### POSTED
-- r/lloydminster: https://www.reddit.com/r/lloydminster/comments/1wrowoq/alberta_buysell_marketplace_app_free_to_join_99/
+- r/Canmore — no rules returned
+- r/FortSaskatchewan — no explicit ad ban
+- r/SherwoodPark — "no spam and no EXCESSIVE self-promotion" (borderline, attempt)
+- r/Okotoks — no rules returned
+- r/Cochrane_AB — no rules returned
+- r/AirdrieCommunity — no rules returned
+- r/Jasper — "self-promotion not outright banned, keep it limited"
+- r/AlbertaFarming — no rules returned
+- r/albertaworklife — "promote yourself only when relevant and part of a real conversation" (topic-relevant: Alberta marketplace IS work/life relevant)
 
 ---
 
@@ -54,7 +62,6 @@ App URL: https://albertacountryroadsmrkt.whacka.app
 - Olds Alberta Buy & Sell: https://www.facebook.com/groups/434436156644946/
 - Olds and Area Buy and Sell Everything: https://www.facebook.com/groups/1146741452406164/
 - Beaumont, Alberta, Buy Sell & Swap: https://www.facebook.com/groups/321434684718442/
-- Leduc, Alberta Swap and Buy: https://www.facebook.com/groups/10852166993/
 - Hanna and Area Buy/Sell/Swap: https://www.facebook.com/groups/75376765203/
 - Gunn Alberta Buy, Sell & Chat: https://www.facebook.com/groups/Gunnbuyandsell/
 - Hinton Buy/Sell/Trade: https://www.facebook.com/groups/221208307945528/
@@ -65,53 +72,49 @@ App URL: https://albertacountryroadsmrkt.whacka.app
 - Alberta Acreages, Farm, Ranches, Land FOR SALE: https://www.facebook.com/groups/869901651739394/
 
 ### Notes
-- Facebook requires being logged in as Max Power (user is already a member of many of these groups)
-- Use Browse agent to post to Facebook groups if needed
-- Max Power is already a member of Alberta buy/sell groups
+- Facebook requires being logged in as Max Power
+- Use Template C from targets/post_templates.md
 
 ---
 
 ## Discord Servers — Alberta
 
-- Discord Alberta (community server): https://disboard.org/server/1391190377515716718
-  - "Weekly listings of events within Alberta" — has event/listing culture
-- YYCalgary (Calgary community): https://disboard.org/server/1261545563493498952
-- YYC Hangout Hub (Calgary, 21+): https://disboard.org/server/1334700905169293392
+- Discord Alberta (community server, 30 members): https://disboard.org/server/1391190377515716718
+  - Has #events channel, community-oriented, active
+- YYCalgary (Calgary community, 24 members): https://disboard.org/server/1261545563493498952
 - Canada (285 members, Alberta channel): https://disboard.org/server/410595054714093569
 
 ### Notes
 - Discord servers require joining and finding appropriate #classifieds or #marketplace channel
-- Must abide by individual server rules
-- Browse agent needed to join and post
+- Use Template D from targets/post_templates.md
+- Browse agent can handle
 
 ---
 
-## Other Platforms
+## Locanto.ca — Free Alberta Classifieds
 
-- Kijiji.ca — Alberta community boards: https://www.kijiji.ca/b-alberta/
-  (Note: Kijiji community section allows free posts; worth attempting)
-- Locanto.ca — Free classifieds, Alberta: https://www.locanto.ca/
-  (Free to post, community/classifieds section)
-- NextDoor — Requires address verification, not suitable for blitz
-- usedalberta.com — Research needed
+All require countryroadsmpt@gmail.com login. Browse agent can handle after login.
+
+- https://www.locanto.ca/calgary/Community/
+- https://www.locanto.ca/edmonton/Community/
+- https://www.locanto.ca/red-deer/Community/
+- https://www.locanto.ca/lethbridge/Community/
+- https://www.locanto.ca/grande-prairie/Community/
+- https://www.locanto.ca/medicine-hat/Community/
+- https://www.locanto.ca/fort-mcmurray/Community/
+- https://www.locanto.ca/lloydminster/Community/
+- https://www.locanto.ca/airdrie/Community/
+
+### Notes
+- Use Template E from targets/post_templates.md
 
 ---
 
 ## Post Template Summary
 
-### Version A (Founding member scarcity focus)
-Title: "Free local Alberta buy/sell app — 99 founding member spots still open"
-Body: Leads with Alberta-built angle, scarcity of 99/100 founding spots, free forever, 12 categories.
-
-### Version B (Builder's perspective)
-Title: "Built a free local Alberta buy/sell marketplace app — looking for founding members"
-Body: "Long-time Albertan" voice, frustrated with big platforms, built something local.
-
-### Version C (Community value)
-Title: "Local Alberta marketplace — free to join, free to post forever"
-Body: Leads with what community gets, no pitch pressure.
-
-### Tailor to each community:
-- Lead with local city/town name
-- Use Local Business flair on r/RedDeer
-- Keep tone conversational, not spammy
+All templates in targets/post_templates.md. Quick reference:
+- Template A: Local Builder voice (Reddit, local business tone)
+- Template B: Community Sharer voice (Reddit, general Alberta)
+- Template C: Facebook buy/sell groups (emoji-friendly)
+- Template D: Discord community channels
+- Template E: Locanto/classifieds (structured ad format)
