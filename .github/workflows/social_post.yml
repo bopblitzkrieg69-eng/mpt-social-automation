@@ -1,0 +1,57 @@
+# .github/workflows/social_post.yml
+#
+# Posts a rotating MPT Country Roads Marketplace promo through Postiz.
+# Postiz handles delivery to every connected channel: Reddit, Facebook,
+# LinkedIn, and any others you connect in your Postiz dashboard.
+#
+# Schedule: Monday, Wednesday, Friday at 10:00 AM Mountain Time.
+#   Alberta runs MDT (UTC-6) in summer and MST (UTC-7) in winter.
+#   10am MDT = 16:00 UTC | 10am MST = 17:00 UTC
+#   Both crons are active so the post fires at 10am regardless of DST.
+#   On transition weeks a post will fire at both times (~1 hour apart) —
+#   that is harmless and self-corrects the following week.
+#
+# Required GitHub Secret (Settings → Secrets and variables → Actions):
+#   POSTIZ_API_KEY — API key from your Postiz dashboard (Settings → API)
+#
+# Optional GitHub Secrets (only needed for pinning specific channels):
+#   POSTIZ_REDDIT_INTEGRATION_ID
+#   POSTIZ_FACEBOOK_INTEGRATION_ID
+#   POSTIZ_LINKEDIN_INTEGRATION_ID
+#   If none of these are set, the script auto-discovers and posts to ALL
+#   active channels connected to your Postiz account.
+
+name: Post to Social via Postiz
+
+on:
+  schedule:
+    # 10am MDT (UTC-6) = 16:00 UTC — Mon, Wed, Fri
+    - cron: '0 16 * * 1,3,5'
+    # 10am MST (UTC-7) = 17:00 UTC — Mon, Wed, Fri (winter)
+    - cron: '0 17 * * 1,3,5'
+  workflow_dispatch:   # manual trigger from the Actions tab for testing
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Post to social platforms via Postiz
+        env:
+          POSTIZ_API_KEY:                ${{ secrets.POSTIZ_API_KEY }}
+          POSTIZ_REDDIT_INTEGRATION_ID:  ${{ secrets.POSTIZ_REDDIT_INTEGRATION_ID }}
+          POSTIZ_FACEBOOK_INTEGRATION_ID: ${{ secrets.POSTIZ_FACEBOOK_INTEGRATION_ID }}
+          POSTIZ_LINKEDIN_INTEGRATION_ID: ${{ secrets.POSTIZ_LINKEDIN_INTEGRATION_ID }}
+        run: python post_to_postiz.py

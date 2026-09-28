@@ -1,119 +1,132 @@
-# MPT Country Roads — Reddit Social Automation
+# MPT Country Roads Marketplace — Social Posting Automation
 
-Automatically posts rotating promotional content for [Alberta Country Roads Marketplace](https://albertacountryroadsmrkt.whacka.app) to r/Alberta and r/Calgary on a Monday / Wednesday / Friday schedule at 10am Mountain Time.
+Automated social media posting for [MPT Country Roads Marketplace](https://albertacountryroadsmrkt.whacka.app).
+
+Posts fire Monday / Wednesday / Friday at **10am Mountain Time** via GitHub Actions, routing through **[Postiz](https://postiz.com)** — a multi-platform social scheduler. One workflow run reaches every channel you connect to your Postiz account: Reddit, Facebook, LinkedIn, X (Twitter), Instagram, and 30+ others.
 
 ---
 
 ## How it works
 
-- **GitHub Actions** runs `post_to_reddit.py` on the configured cron schedule.
-- The script picks one of 6 rotating post variants, determined by the week number and day, so the same text never runs in back-to-back posts.
-- Reddit credentials are read entirely from **GitHub Secrets** — nothing sensitive is stored in the code.
+1. GitHub Actions triggers the cron on Mon/Wed/Fri at 10am MT.
+2. `post_to_postiz.py` picks a post variant based on the run date (deterministic rotation across 6 variants).
+3. The script calls the Postiz API (`POST /public/v1/posts`), passing the selected content to every connected channel.
+4. Postiz handles the platform-specific formatting and publishing.
 
 ---
 
-## Setup — 5 steps
+## Setup
 
-### 1. Create a Reddit app for the posting account
+### 1. Create a Postiz account
 
-1. Log in to the Reddit account you want to post from.
-2. Go to **https://www.reddit.com/prefs/apps**.
-3. Click **Create App** (or **Create Another App**).
-4. Fill in:
-   - **Name**: `mpt-social-bot` (or anything you like)
-   - **Type**: choose **script**
-   - **Redirect URI**: `http://localhost:8080` (required by Reddit, not actually used)
-5. Click **Create app**.
-6. Note the two values shown:
-   - The short string under your app name — that is your **Client ID**.
-   - The longer string next to **secret** — that is your **Client Secret**.
+Sign up at [postiz.com](https://postiz.com) (cloud) or self-host.
 
----
+### 2. Connect your social channels in Postiz
 
-### 2. Add GitHub Secrets
+In the Postiz dashboard, connect the accounts you want to post to:
+- **Reddit** — requires a Reddit account with posting permissions
+- **Facebook Page** — requires a Facebook Page (not a personal profile)
+- **LinkedIn** — personal profile or company page
+- Any other platform Postiz supports (X, Instagram, TikTok, Bluesky, etc.)
 
-In this repo: **Settings → Secrets and variables → Actions → New repository secret**
+### 3. Get your Postiz API key
 
-Add each of the following secrets exactly as named:
+In your Postiz dashboard: **Settings → API → Generate API Key**
 
-| Secret name | What to put in it |
+Copy the key — you will add it as a GitHub Secret.
+
+### 4. Add GitHub Secrets
+
+Go to your repo on GitHub: **Settings → Secrets and variables → Actions → New repository secret**
+
+#### Required
+
+| Secret name | Value |
 |---|---|
-| `REDDIT_CLIENT_ID` | The Client ID from step 1 (short string under app name) |
-| `REDDIT_CLIENT_SECRET` | The Client Secret from step 1 (string next to "secret") |
-| `REDDIT_USERNAME` | The Reddit username of the posting account (no `u/` prefix) |
-| `REDDIT_PASSWORD` | The Reddit account password |
-| `REDDIT_USER_AGENT` | A short identifier, e.g. `mpt-social-bot/1.0 by YourRedditUsername` |
+| `POSTIZ_API_KEY` | Your Postiz API key from step 3 |
 
-**All 5 secrets are required.** The workflow will fail with a clear error message if any are missing.
+#### Optional — pin specific channels
 
----
+If you leave these out, the script auto-discovers **all** active channels connected to your Postiz account and posts to every one of them. Set these only if you want to restrict posting to specific channels:
 
-### 3. (One-time) Make sure the Reddit account has enough karma to post
+| Secret name | How to find the value |
+|---|---|
+| `POSTIZ_REDDIT_INTEGRATION_ID` | In Postiz: Channels → click Reddit → copy the ID from the URL or API (`GET /public/v1/integrations`) |
+| `POSTIZ_FACEBOOK_INTEGRATION_ID` | Same — Facebook Page channel |
+| `POSTIZ_LINKEDIN_INTEGRATION_ID` | Same — LinkedIn channel |
 
-Reddit restricts new accounts from posting in large subreddits like r/Alberta until they have some karma history. If posts fail with a `403` or `RATELIMIT` error, the account may need to build karma first by commenting on other posts.
-
-See `knowledge/reddit-rate-limit-fresh-account.md` if you hit this.
-
----
-
-### 4. Test the workflow manually
-
-Before waiting for the scheduled run:
-
-1. Go to the **Actions** tab in this repo.
-2. Select **Post to Reddit**.
-3. Click **Run workflow** → **Run workflow**.
-
-This fires the script immediately. Check the run log for the URL of the post it created.
+To find integration IDs, call the Postiz API:
+```bash
+curl -H "Authorization: YOUR_API_KEY" https://api.postiz.com/public/v1/integrations
+```
+Each object in the response has an `"id"` field — that is the value to use.
 
 ---
 
-### 5. Schedule (automatic)
+## Files
 
-Once secrets are in place the workflow fires automatically:
-
-- **Monday at 10am MT**
-- **Wednesday at 10am MT**
-- **Friday at 10am MT**
-
-Alberta observes MDT (UTC-6) in summer. The cron in the workflow file uses `16:00 UTC`. A commented-out line for `17:00 UTC` (MST, UTC-7, winter) is included — uncomment it in October when clocks fall back.
+| File | Purpose |
+|---|---|
+| `.github/workflows/social_post.yml` | GitHub Actions workflow — cron + manual trigger |
+| `post_to_postiz.py` | Main script — picks post variant, calls Postiz API |
+| `posts/post_variations.py` | 6 rotating post variants (founding-member scarcity hook) |
+| `posts/__init__.py` | Package marker |
+| `requirements.txt` | Python dependencies (`requests`) |
 
 ---
 
-## File layout
+## Post content
+
+6 rotating variants, all built around the founding-member scarcity hook:
+
+- **App URL**: https://albertacountryroadsmrkt.whacka.app
+- **Hook**: "99 of 100 founding member spots still open — free to join, free to post forever"
+- Targeting Alberta buy/sell audience
+
+Post content is in `posts/post_variations.py`. Edit the `POSTS` list there to change what gets sent.
+
+---
+
+## Schedule and timezone
+
+Alberta observes:
+- **MDT (UTC-6)** — mid-March to early November
+- **MST (UTC-7)** — early November to mid-March
+
+The workflow runs **both** cron entries (16:00 UTC and 17:00 UTC) so the post always lands at 10am MT regardless of DST. On the two annual transition weeks, two posts fire roughly 1 hour apart — this is harmless and self-corrects the following week.
+
+---
+
+## Platforms that receive posts
+
+Any channel connected in your Postiz account is included automatically. Postiz supports 34 platforms including:
+
+Reddit · Facebook · LinkedIn · X (Twitter) · Instagram · TikTok · Bluesky · Pinterest · YouTube · Discord · Slack · Telegram · Threads · Mastodon · and more.
+
+**Reddit-specific note**: Reddit requires a title and subreddit in its API settings. The script posts to `r/Alberta` with the post title derived from the first line of each variant. If you want to post to additional subreddits, edit `post_to_postiz.py` → `build_platform_entry()` and add more entries to the `subreddit` array.
+
+---
+
+## Manual test
+
+1. Go to **Actions** tab in the repo.
+2. Select **Post to Social via Postiz**.
+3. Click **Run workflow**.
+
+The run logs show which integrations were found, which post variant was selected, and the Postiz API response.
+
+---
+
+## Rotating post selection
+
+The variant is chosen deterministically:
 
 ```
-mpt-social-automation/
-├── .github/
-│   └── workflows/
-│       └── reddit_post.yml      # GitHub Actions workflow (cron + job definition)
-├── posts/
-│   ├── __init__.py
-│   └── post_variations.py       # 6 rotating post variants with titles and body text
-├── post_to_reddit.py            # Main script: picks variant, authenticates, posts
-├── requirements.txt             # Python dependency (praw)
-└── README.md                    # This file
+index = (ISO_week_number x 3 + day_slot) % 6
+day_slot: Mon=0, Wed=1, Fri=2
 ```
 
----
-
-## Customising posts
-
-Edit `posts/post_variations.py` to add, remove, or reword variants. Each entry is a dict with:
-- `title` — the Reddit post title
-- `body` — the self-text body (Markdown)
-- `subreddits` — list of subreddit names to post to (e.g. `["Alberta"]` or `["Calgary"]`)
-
-The app URL in every variant points to **https://albertacountryroadsmrkt.whacka.app**.
-
----
-
-## Secrets reference (quick lookup)
-
-```
-REDDIT_CLIENT_ID       short string under app name on reddit.com/prefs/apps
-REDDIT_CLIENT_SECRET   string next to "secret" on the same page
-REDDIT_USERNAME        Reddit username (no u/ prefix)
-REDDIT_PASSWORD        Reddit password
-REDDIT_USER_AGENT      e.g.  mpt-social-bot/1.0 by YourRedditUsername
-```
+This means:
+- Each week uses 3 consecutive variants (Mon, Wed, Fri).
+- The starting variant shifts each week, so you never see the same text twice in a row across the full 6-variant pool.
+- Given the same date, the same variant is always selected — reruns and manual triggers on the same day are idempotent.
